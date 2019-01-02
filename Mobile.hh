@@ -14,11 +14,13 @@ public:
   //bool active()const {return _active;}
   void set_position(float x,float y){_x = x; _y = y;}
 
-  virtual void move(float x,float y)/*{_x = _x+x; _y = _y+y;}*/=0;
+  
 
 protected:
   float _h, _w;
   float _x, _y;
+  float _Xi, _Xf;//Le personnage sera confiné sur l'axe des absisces entre Xi et Xf
+  float _Yi, _Yf;//Le personnage sera confiné sur l'axe des ordonnées entre Yi et Yf
   //bool  _active;
 };
 

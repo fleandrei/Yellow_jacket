@@ -7,7 +7,7 @@
 class Ecran
 {
 public:
-	Ecran(uint16_t w, uint16_t h);
+	Ecran(uint16_t w, uint16_t h, uint16_t sizeblock);
 	~Ecran(){delete _win;}
 	bool isOpen(){return _win->isOpen();}
     void close(){_win->close();}
@@ -15,14 +15,28 @@ public:
     bool pollEvent(sf::Event& event){return _win->pollEvent(event);}
     void draw_gilet(float x, float y);
     void draw_gilet(float x, float y, float h, float w);
+    void draw_CRS(float x, float y);
+    void draw_CRS(float x, float y, float h, float w);
+    void draw_Grenade(float x, float y);
+    void draw_Grenade(float x, float y, float h, float w);
+
+
 
 private:
 	sf::RenderWindow *  _win;
-  	uint16_t _w, _h;
+  	uint16_t _w, _h, _sizeblock;
+
+  	//texture et sprite Gilet jaune
   	sf::Texture jaune;
   	sf::Sprite gilet_jaune;
-  	//Sprite crs;
 
+  	//Texture et Sprite CRS;
+  	sf::Texture CRS_tex;
+  	sf::Sprite CRS_spr;
+
+  	//Texture et Sprite Grenade:
+  	sf::Texture Grenade_tex;
+  	sf::Sprite Grenade_spr;
 	
 };
 
