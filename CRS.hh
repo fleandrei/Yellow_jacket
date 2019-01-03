@@ -17,6 +17,8 @@ public:
   void act();
 
   float get_love()const;
+  
+  
 private:
 	float love; //Level Of ViolencE 
 };

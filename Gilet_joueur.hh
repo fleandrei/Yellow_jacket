@@ -13,6 +13,7 @@ public:
   //virtual void interract(Mobile& m) = 0;
   virtual void draw(Ecran& e) const;
   virtual void move(float x, float y);
+  bool colision_grenade(float x, float y, Ecran &e);
   
   int get_vie()const;
   void set_vie(int v);

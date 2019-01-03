@@ -14,7 +14,7 @@ CRS::CRS(std::string nom, float x, float y, float Xi, float Xf, float Yi, float 
 	_Yf=Yf;
 	_h=h;
 	_w=w; 
-	love=0.1;
+	love=0.4;
 	E.draw_CRS(x,y,h,w);
   
 }

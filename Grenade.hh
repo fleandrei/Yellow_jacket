@@ -8,16 +8,20 @@
 class Grenade: public Mobile
 {
 public:
-	Grenade(float x, float y, float Xi, float Xf, float Yi, float Yf, float w, float h,float temps, Ecran &E);
+	Grenade(float x, float y, float Xi, float Xf, float Yi, float Yf, float w, float h,float duree, Ecran &E);
 
   virtual void draw(Ecran& e) const;
-  void update(float time);
+  bool update(float time); //Renvoie false si la grenade a attérit et doit être supprimer de la mêmoire. Renvoie true sinon
+
+  float get_temps()const;
+  float get_duree()const;
   
 protected:
   
   //float cible_x, cible_y;
   bool _active;
-  float _temps; //temps entre le moment où la grenade est lancée et où elle attérit. 
+  float _duree; //temps entre le moment où la grenade est lancée et où elle est censsée attérir.
+  float _temps; //temps entre le moment où la grenade a été lancée et le moment présent. 
 };
 
 #endif

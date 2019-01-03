@@ -1,7 +1,9 @@
 #ifndef _GAME_HH
 #define _GAME_HH
+#include <list>
 #include "Ecran.hh"
 #include "Gilet_joueur.hh"
+#include "Grenade.hh"
 #include "CRS.hh"
 
 /****************************************************/
@@ -12,13 +14,13 @@
 
 class Game{
  public :
- Game(Gilet_joueur J);
+ Game();
   //~Game();
   bool play();
  
  private:
-  Gilet_joueur joueur;
-  CRS crs;
+  
+
 
  
 
