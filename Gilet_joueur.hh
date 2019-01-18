@@ -4,6 +4,8 @@
 //#include <iostream>
 #include "Personne.hh"
 
+enum Orientation{FACE, DOS, PROFILE};
+
 class Gilet_joueur: public Personne
 {
 public:
@@ -14,11 +16,13 @@ public:
   virtual void draw(Ecran& e) const;
   virtual void move(float x, float y);
   bool colision_grenade(float x, float y, Ecran &e);
-  
+
   int get_vie()const;
   void set_vie(int v);
+  void set_orientation(int o){_dir= (Orientation) o;}
 private:
-	int vie;
+	int _vie;
+	Orientation _dir;
  
 };
 

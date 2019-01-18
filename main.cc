@@ -1,7 +1,9 @@
 #include <iostream>
 #include <ctime>
+#include <cstdlib>
 #include <list>
-#include <queue>
+#include <deque>
+#include <vector>
 #include "Game.hh"
 #include "Ecran.hh"
 #include "Gilet_joueur.hh"
@@ -12,7 +14,7 @@ using namespace std;
 using namespace sf;
 
 float sizeblock=100;
-uint16_t W=15*sizeblock, H=7*sizeblock; //Dimenssions de l'écran
+uint16_t W=16*sizeblock, H=8*sizeblock; //Dimenssions de l'écran
 float h_p=sizeblock+5, w_p=sizeblock;// Dimenssion des personnages
 float h_g=10, w_g=10; //Dimenssions des grenades.
 
@@ -22,21 +24,33 @@ int main(int argc, char const *argv[])
 	Clock degat_clock;// Pour gérer l'affichage de l'image de dégat du joueur.
 
 	Ecran ecran(W,H,sizeblock);
-	Gilet_joueur J("Joueur",W-w_p, H-2*sizeblock+5, W-w_p, W, 3*sizeblock, H-30, w_p, h_p,ecran);
+	Gilet_joueur J("Joueur",W-w_p, H-2*sizeblock+5, W-w_p, W, 3*sizeblock-30, H-30, w_p, h_p,ecran);
 	Clock joueur_clock;
 	//Gilet_joueur J("Joueur",  H/2,W-70,0, H-30, W-70, W, w_p, h_p,ecran);
 
 	CRS crs("Benalla", 0, H-2*sizeblock+5, 0, w_p, 3*sizeblock, H-30, w_p, h_p,ecran);
 	Clock crs_clock;
 
-	Voiture car(0,sizeblock, -2*sizeblock, 2*sizeblock, sizeblock,0, 2*sizeblock, sizeblock, ecran);
-	/*Grenade gren(0,H-2*sizeblock+5, 0, W-w_p, H-2*sizeblock+5, sizeblock+10, w_g, h_g, 2, ecran );
-	Clock gren_clock;
-*/
 	list<Grenade> gren;
 	Clock gren_clock;
 
-	queue<Voiture> file;
+		/*Grenade gren(0,H-2*sizeblock+5, 0, W-w_p, H-2*sizeblock+5, sizeblock+10, w_g, h_g, 2, ecran );
+	Clock gren_clock;
+*/
+
+	Voiture car(0,3*sizeblock, -2*sizeblock, 2*sizeblock, 3*sizeblock,2*sizeblock, 2*sizeblock, sizeblock, 15, ecran);
+	vector<deque<Voiture>> file;
+	file.push_back(deque<Voiture>());
+	file.push_back(deque<Voiture>());
+	file.push_back(deque<Voiture>());
+	file.push_back(deque<Voiture>());
+	file.push_back(deque<Voiture>());
+	Clock car_clock_move;
+	Clock car_clock_create;
+	Clock car_clock_wait;
+	
+
+	
 
 	float alea;
 	srand (time(NULL));
@@ -53,16 +67,37 @@ int main(int argc, char const *argv[])
 			{
 				if(sf::Keyboard::isKeyPressed(Keyboard::Up)){
                 	J.move(0,-sizeblock);
+                	J.set_orientation(1);
                 //sleep(seconds(0.3));
             	}else if(sf::Keyboard::isKeyPressed(Keyboard::Down)){
                 	J.move(0,sizeblock);
+                	J.set_orientation(0);
                 //sleep(seconds(0.3));
                 }			
+        	}else{
+        		J.set_orientation(2);
         	}
 			
 		}
 		
+
+
         
+        if (car_clock_create.getElapsedTime()>=seconds(2))
+        {
+        	int voie = rand()%5;
+        	if (abs((voie+3)*sizeblock - crs.get_y())>30 && file[voie].size()<6)
+        	{
+        		file[voie].push_front(Voiture(-2*sizeblock, (3+voie)*sizeblock, -2*sizeblock, W, (3+voie)*sizeblock, (3+voie)*sizeblock, 2*sizeblock, sizeblock, 15, ecran ));
+        		car_clock_create.restart();
+        		//cout<<"file["<<voie<<"].size()"<<file[voie].size()<<endl;
+        		//cout<<" numéro de voie: "<<voie<<endl;
+        	}
+        	
+        	
+        }
+
+
 
         if (crs_clock.getElapsedTime()>=seconds(1))
         {
@@ -79,7 +114,7 @@ int main(int argc, char const *argv[])
         	}else{
         		//cout<<"ATTAQUE"<<endl;
         		float Y=crs.get_y();
-        		gren.push_back(Grenade (w_p/2,Y, 0, W-w_p/2, Y, Y-sizeblock, w_g, h_g, 2, ecran ));
+        		gren.push_back(Grenade (w_p/2,Y+3*sizeblock/4, 0, W-w_p/2, Y+3*sizeblock/4, Y-sizeblock/4, w_g, h_g, 2, ecran ));
         	}
         	crs_clock.restart();
         }
@@ -113,13 +148,73 @@ int main(int argc, char const *argv[])
         gren_clock.restart();
         
 
+        //cout<<(car-J).x<<" "<<(car-J).y<<endl;
+        if (car_clock_move.getElapsedTime()>=seconds(0.05))
+        {
+        	std::deque<Voiture>::iterator iter;
+        	for (int i = 0; i < 5; ++i)
+        	{
+        		for ( iter = file[i].begin(); iter != file[i].end(); ++iter)
+        		{
+        			if (!iter->wait(car_clock_wait.getElapsedTime().asSeconds()))
+        			{
+        				if (iter !=  (file[i].end()-1) && *iter-*(iter+1) < 3*sizeblock)
+        				{
+        					(*iter)(*(iter+1));
+        				}
+        				iter->move();
+        			}
+        		}
+        		
+        		//cout<<"(file[0].end()-1)->get_time()=  "<<(file[0].end()-1)->get_time()<<" vitesse: "<<(file[0].end()-1)->get_vitesse()<<endl;
+        		//cout<<"(file[1].end()-1)->get_time()=  "<<(file[1].end()-1)->get_time()<<" vitesse: "<<(file[1].end()-1)->get_vitesse()<<endl;
+        		/*On travaille sur la tête de queu*/
+        		if (!file[i].empty()) 
+        		{
 
 
+        			if ((*(file[i].end()-1))-J < 3*sizeblock ) 
+        			{
+        				(*(file[i].end()-1))(J);
+        				//cout<<"J devant "<<i<<endl;
 
+        			}else if((file[i].end()-1)->get_time() == 0){
+        				//cout<<"restart voie "<<i<<endl;
+        				(file[i].end()-1)->restart();
+        			}
+        			
+        			if ( (file[i].end()-1)->fin())
+        			{
+        				file[i].pop_back();
+        				//cout<<"file["<<i<<"].pop()"<<endl;
+        			}
+        			
+        			
+        			
+        			
+        		}
+        	}
+        	
+        	car.move();
+        	car_clock_move.restart();
+        	car_clock_wait.restart();
+        }
+       // cout<<"nombre de voiture: "<<Voiture::get_nbr_voiture()<<endl;
 
+       
+
+		for (int i = 0; i < 5; ++i)
+        		{
+        			for (std::deque<Voiture>::iterator iter = file[i].begin(); iter != file[i].end(); ++iter)
+        			{
+        				//cout<<"file["<<i<<"].size()= "<<file[i].size()<<endl;
+        				iter->draw(ecran);
+        			
+        			}
+        		}
         crs.draw(ecran);		
 		car.draw(ecran);
-		ecran.draw_victoire();
+		//ecran.draw_victoire();
 		if (!damage && degat_clock.getElapsedTime().asSeconds()>=0.5) //Si le joueur s'est pris un dégat il y a moins de 0.5 seconde, on affiche l'image de dégat
 		{
 			J.draw(ecran);
@@ -129,7 +224,7 @@ int main(int argc, char const *argv[])
 			//sleep(seconds(0.5));
 		}
 		ecran.render();
-
+		ecran.draw_Map();
 		
 	}
 	return 0;

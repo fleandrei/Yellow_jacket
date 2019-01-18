@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include "Ecran.hh"
+#include <cstdlib>
 
 class Mobile
 {

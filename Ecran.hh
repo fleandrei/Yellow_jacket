@@ -14,7 +14,7 @@ public:
     void render(){_win->display(); _win->clear();} //Affiche tous ce qu'il y a sur l'ecran; puis efface l'écran actuel.
     bool pollEvent(sf::Event& event){return _win->pollEvent(event);}
     bool colision_joueur(sf::Vector2f point){return joueur_spr.getGlobalBounds().contains(point);}
-    void draw_gilet(float x, float y);
+    void draw_gilet(float x, float y, int O);
     void draw_gilet(float x, float y, float h, float w);
     void draw_degat(float x, float y, float h, float w);
     void draw_CRS(float x, float y);
@@ -23,6 +23,7 @@ public:
     void draw_Grenade(float x, float y, float h, float w);
     void draw_Voiture(float x, float y);
     void draw_Voiture(float x, float y, float h, float w);
+    void draw_Map();
     void draw_victoire();
 
 
@@ -57,6 +58,9 @@ private:
   	sf::Texture Vic_tex;
   	sf::Sprite Vic_spr;
 
+   //Texture et Sprite de la map:
+  	sf::Texture Map_tex;
+  	sf::Sprite Map_spr;
 };
 
 

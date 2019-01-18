@@ -13,17 +13,17 @@ Ecran::Ecran(uint16_t w, uint16_t h, uint16_t sizeblock): _h(h), _w(w), _sizeblo
 	
 	//sf::Texture jaune;
 	// On Charge la texture de gilet jaune et on crée le sprite correspondant
-	if (!Guillaume_tex.loadFromFile("guillaume.jpg"))
+	if (!Guillaume_tex.loadFromFile("Image/Guillaume.png"))
 	{
     	std::cout<<"Erreure l'image guillaume.jpg n'est pas chargée"<<std::endl;
 	}
 
-	if (!Gui_degat.loadFromFile("guillaumemal.png"))
+	if (!Gui_degat.loadFromFile("Image/degat_gui.png"))
 	{
     	std::cout<<"Erreure l'image guillaumemal.gpng n'est pas chargée"<<std::endl;
 	}
 
-	if (!Andrei_tex.loadFromFile("andrei.jpg"))
+	if (!Andrei_tex.loadFromFile("Image/Andrei.png"))
 	{
 		std::cout<<"Erreure l'image andrei.jpg n'est pas chargée"<<std::endl;
 	}
@@ -69,14 +69,15 @@ Ecran::Ecran(uint16_t w, uint16_t h, uint16_t sizeblock): _h(h), _w(w), _sizeblo
 	Grenade_spr.setScale(0.25f, 0.25f);
 
 	// On Charge la texture de La Voiture et on crée le sprite correspondant
-	if (!Voiture_tex.loadFromFile("voiture.jpeg"))
+	if (!Voiture_tex.loadFromFile("Image/Voiture.png"))
 	{
-		cout<<"Erreure l'image voiture.jpeg n'a pas pue être chargée"<<endl;
+		cout<<"Erreure l'image Voiture.png n'a pas pue être chargée"<<endl;
 	}
 
 	Voiture_tex.setSmooth(true);
 	Voiture_spr.setTexture(Voiture_tex);
-	Voiture_spr.setScale(0.25f, 0.25f);
+	Voiture_spr.setTextureRect(IntRect(45, 50, 550,250));
+	//Voiture_spr.setScale(0.25f, 0.25f);
 
 	//On Charge la texture de La Grenade et on crée le sprite correspondant
 	if (!Vic_tex.loadFromFile("victoire.png"))
@@ -88,13 +89,33 @@ Ecran::Ecran(uint16_t w, uint16_t h, uint16_t sizeblock): _h(h), _w(w), _sizeblo
 	Vic_spr.setTexture(Vic_tex);
 	Vic_spr.setScale(0.25f, 0.25f);
 
+	if (!Map_tex.loadFromFile("Image/Route.png"))
+	{
+		cout<<"Erreure l'image Route.png n'a pas pue être chargée"<<endl;
+	}
+
+	Map_tex.setSmooth(true);
+	Map_spr.setTexture(Map_tex);
+	Map_spr.setPosition(-40,3*_sizeblock+10);
+	Map_spr.setScale((_w+70)/Map_spr.getLocalBounds().width, (20+5*_sizeblock)/Map_spr.getLocalBounds().height);
+
 }
 
   
 
-void Ecran::draw_gilet(float x, float y){
+void Ecran::draw_gilet(float x, float y, int O){
 	//cout<<"x="<<x<<" y= "<<y<<endl;
 	//cout<<"Joueur globale bound"<<joueur_spr.getGlobalBounds().width<<" "<<joueur_spr.getGlobalBounds().height<<endl;
+
+	if (O==0)
+	{
+		joueur_spr.setTextureRect(IntRect(0, 60, 4037/3,2797));
+	}else if(O==1){
+		joueur_spr.setTextureRect(IntRect(4037/3, 60, 4037/3, 2797));
+	}else{
+		joueur_spr.setTextureRect(IntRect(4037*2/3, 60, 4037/3, 2797));
+	}
+
 	joueur_spr.setPosition(x,y);
 	_win->draw(joueur_spr);
 	/*jaune_spr.setPosition(x,y);
@@ -103,7 +124,7 @@ void Ecran::draw_gilet(float x, float y){
 
 void Ecran::draw_gilet(float x, float y, float h, float w){
 	//cout<<"h="<<h<<"w="<<w<<endl;
-	joueur_spr.setTextureRect(IntRect(570, 60, 200, 270));
+	joueur_spr.setTextureRect(IntRect(4037*2/3, 60, 4037/3, joueur_spr.getLocalBounds().height));
 
 	joueur_spr.setScale(w/joueur_spr.getLocalBounds().width,h/joueur_spr.getLocalBounds().height);
 	//cout<<gilet_jaune.getScale().x<<" "<<gilet_jaune.getScale().y<<endl;
@@ -162,4 +183,8 @@ void Ecran::draw_Voiture(float x, float y, float h, float w){
 	Voiture_spr.setPosition(x,y);
 	//cout<<"x= "<<x<<" y= "<<y<<endl;
 	_win->draw(Voiture_spr);
+}
+
+void Ecran::draw_Map(){
+	_win->draw(Map_spr);
 }

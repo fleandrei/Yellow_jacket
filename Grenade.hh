@@ -15,6 +15,7 @@ public:
 
   float get_temps()const;
   float get_duree()const;
+
   
 protected:
   
