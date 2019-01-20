@@ -14,6 +14,8 @@ public:
     void render(){_win->display(); _win->clear();} //Affiche tous ce qu'il y a sur l'ecran; puis efface l'écran actuel.
     bool pollEvent(sf::Event& event){return _win->pollEvent(event);}
     bool colision_joueur(sf::Vector2f point){return joueur_spr.getGlobalBounds().contains(point);}
+    void set_joueur(std::string nom);
+    void draw_intro();
     void draw_gilet(float x, float y, int O);
     void draw_gilet(float x, float y, float h, float w);
     void draw_degat(float x, float y, float h, float w);
@@ -34,6 +36,8 @@ private:
   	//texture et sprite Gilet jaune
   	sf::Texture Guillaume_tex;
   	sf::Texture Andrei_tex;
+  	sf::Sprite Guillaume_spr;
+  	sf::Sprite Andrei_spr;
   	sf::Sprite joueur_spr;
   	sf::Texture Gui_degat;
   	sf::Texture And_degat;
@@ -61,7 +65,23 @@ private:
    //Texture et Sprite de la map:
   	sf::Texture Map_tex;
   	sf::Sprite Map_spr;
-};
+
+  	//Texture et Sprite du backgroung
+  	sf::Texture Background_tex;
+  	sf::Sprite Background_spr;
+    
+    //Texture et Sprite du trotoire
+  	sf::Texture Trotoire_tex;
+  	sf::Sprite Trotoire_spr;
+
+  	//Texture et Sprite du trotoire
+  	//sf::Texture Trotoir;
+  	//sf::Sprite Trotoir;
+
+  	//Texture et Sprite du trotoire
+  	//sf::Texture Trotoir;
+  	//sf::Sprite Trotoir;
+  };
 
 
 

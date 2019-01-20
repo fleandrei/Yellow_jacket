@@ -12,7 +12,7 @@ public:
   //virtual bool isInTheZone(const Player& p) const;  
   //virtual void interract(Mobile& m) = 0;
   virtual void draw(Ecran& e) const;
-  virtual void move(float x, float y);
+  //virtual void move(float x, float y);
   
   void act();
 

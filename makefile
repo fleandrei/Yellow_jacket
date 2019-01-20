@@ -1,5 +1,5 @@
 CC=g++
-SRC=Gilet_joueur.cc Ecran.cc CRS.cc Grenade.cc Voiture.cc
+SRC=Gilet_joueur.cc Ecran.cc CRS.cc Grenade.cc Voiture.cc Game.cc
 OBJS_LIB = ${SRC:.cc=.o}
 OBJS = ${OBJS_LIB} main.o
 LSFML= -lsfml-system -lsfml-window -lsfml-graphics

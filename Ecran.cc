@@ -29,12 +29,25 @@ Ecran::Ecran(uint16_t w, uint16_t h, uint16_t sizeblock): _h(h), _w(w), _sizeblo
 	}
 
 	Guillaume_tex.setSmooth(true);
-	joueur_spr.setTexture(Guillaume_tex);
-	joueur_spr.setScale(0.25f, 0.25f);
+	Guillaume_spr.setTexture(Guillaume_tex);
+	Guillaume_spr.setTextureRect(IntRect(0, 60, 4037/3,2797));
+	Guillaume_spr.setScale(_sizeblock/Guillaume_spr.getLocalBounds().width,(_sizeblock+5)/Guillaume_spr.getLocalBounds().height);
+	Guillaume_spr.setPosition(4*_sizeblock, 4*_sizeblock);
+	
+	//joueur_spr.setScale(0.25f, 0.25f);
 
+	
 	Andrei_tex.setSmooth(true);
+	Andrei_spr.setTexture(Andrei_tex);
+	Andrei_spr.setTextureRect(IntRect(0, 60, 4037/3,2797));
+	Andrei_spr.setScale(_sizeblock/Andrei_spr.getLocalBounds().width,(_sizeblock+5)/Andrei_spr.getLocalBounds().height);
+	Andrei_spr.setPosition(10*_sizeblock, 4*_sizeblock);
 	//Andrei_spr.setTexture(Andrei_tex);
 	//Andrei_spr.setScale(0.25f, 0.25f);
+
+
+	
+
 
 	degat.setTexture(Gui_degat);
 	//degat.setScale(0.25f, 0.25f);
@@ -49,14 +62,15 @@ Ecran::Ecran(uint16_t w, uint16_t h, uint16_t sizeblock): _h(h), _w(w), _sizeblo
 	jaune_spr.setScale(0.25f, 0.25f);
 
 	// On Charge la texture de CRS et on crée le sprite correspondant
-	if (!CRS_tex.loadFromFile("CRS.png"))
+	if (!CRS_tex.loadFromFile("Image/CRS.png"))
 	{
 		cout<<"Erreure l'image CRS.png n'a pas pue être chargée"<<endl;
 	}
 
 	CRS_tex.setSmooth(true);
 	CRS_spr.setTexture(CRS_tex);
-	CRS_spr.setScale(0.25f, 0.25f);
+	CRS_spr.setScale(_sizeblock/CRS_spr.getLocalBounds().width, _sizeblock/CRS_spr.getLocalBounds().height);
+
 
 	// On Charge la texture de La Grenade et on crée le sprite correspondant
 	if (!Grenade_tex.loadFromFile("grenade.jpeg"))
@@ -99,9 +113,48 @@ Ecran::Ecran(uint16_t w, uint16_t h, uint16_t sizeblock): _h(h), _w(w), _sizeblo
 	Map_spr.setPosition(-40,3*_sizeblock+10);
 	Map_spr.setScale((_w+70)/Map_spr.getLocalBounds().width, (20+5*_sizeblock)/Map_spr.getLocalBounds().height);
 
+
+	if (!Background_tex.loadFromFile("Image/arriereplan.png"))
+	{
+		cout<<"Erreure l'image arriereplan.png n'a pas pue être chargée"<<endl;
+	}
+
+	Background_tex.setSmooth(true);
+	Background_spr.setTexture(Background_tex);
+	Background_spr.setPosition(-60,-7);
+	Background_spr.setScale((_w+70)/Background_spr.getLocalBounds().width, (50+3*_sizeblock)/Background_spr.getLocalBounds().height);
+
+	if (!Trotoire_tex.loadFromFile("Image/Trotoire.png"))
+	{
+		cout<<"Erreure l'image Trotoire.png n'a pas pue être chargée"<<endl;
+	}
+
+	Trotoire_tex.setSmooth(true);
+	Trotoire_spr.setTexture(Trotoire_tex);
+	Trotoire_spr.setTextureRect(IntRect(100, 200, 1500, 200));
+	Trotoire_spr.setPosition(-40,8*_sizeblock);
+	Trotoire_spr.setScale((_w+70)/Trotoire_spr.getLocalBounds().width, (50)/Trotoire_spr.getLocalBounds().height);
 }
 
-  
+void Ecran::draw_intro(){
+	_win->draw(Guillaume_spr);
+	_win->draw(Andrei_spr);
+}  
+
+void Ecran::set_joueur(std::string nom){
+	if (nom=="Andrei")
+	{	
+		joueur_spr.setTexture(Guillaume_tex);
+		joueur_spr.setTextureRect(IntRect(4037*2/3, 60, 4037/3, joueur_spr.getLocalBounds().height));
+		joueur_spr.setScale(_sizeblock/joueur_spr.getLocalBounds().width,(_sizeblock+5)/joueur_spr.getLocalBounds().height);
+	}else if(nom=="Guillaume"){
+		joueur_spr.setTexture(Guillaume_tex);
+		joueur_spr.setTextureRect(IntRect(4037*2/3, 60, 4037/3, joueur_spr.getLocalBounds().height));
+		joueur_spr.setScale(_sizeblock/joueur_spr.getLocalBounds().width,(_sizeblock+5)/joueur_spr.getLocalBounds().height);
+	}else{
+		cout<<"Problème le joueur n'a pas de nom conventionnel"<<endl;
+	}
+}
 
 void Ecran::draw_gilet(float x, float y, int O){
 	//cout<<"x="<<x<<" y= "<<y<<endl;
@@ -187,4 +240,7 @@ void Ecran::draw_Voiture(float x, float y, float h, float w){
 
 void Ecran::draw_Map(){
 	_win->draw(Map_spr);
+	_win->draw(Background_spr);
+	_win->draw(Trotoire_spr);
+
 }

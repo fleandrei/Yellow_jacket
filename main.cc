@@ -10,6 +10,7 @@
 #include "CRS.hh"
 #include "Grenade.hh"
 #include "Voiture.hh"
+#include "Game.hh"
 using namespace std;
 using namespace sf;
 
@@ -18,8 +19,21 @@ uint16_t W=16*sizeblock, H=8*sizeblock; //Dimenssions de l'écran
 float h_p=sizeblock+5, w_p=sizeblock;// Dimenssion des personnages
 float h_g=10, w_g=10; //Dimenssions des grenades.
 
+
+void provisoir();
+
 int main(int argc, char const *argv[])
 {	
+
+	Game jeu(sizeblock);
+	jeu.play();
+	provisoir();
+	return 0;
+}
+
+
+
+void provisoir(){
 	bool damage(false); //true si le joueur s'est prit un dégat
 	Clock degat_clock;// Pour gérer l'affichage de l'image de dégat du joueur.
 
@@ -34,9 +48,7 @@ int main(int argc, char const *argv[])
 	list<Grenade> gren;
 	Clock gren_clock;
 
-		/*Grenade gren(0,H-2*sizeblock+5, 0, W-w_p, H-2*sizeblock+5, sizeblock+10, w_g, h_g, 2, ecran );
-	Clock gren_clock;
-*/
+
 
 	Voiture car(0,3*sizeblock, -2*sizeblock, 2*sizeblock, 3*sizeblock,2*sizeblock, 2*sizeblock, sizeblock, 15, ecran);
 	vector<deque<Voiture>> file;
@@ -63,14 +75,16 @@ int main(int argc, char const *argv[])
 				ecran.close();
 			}
 
+
+			/*Déplacement du joueur*/
 			if (event.type==Event::KeyPressed && joueur_clock.getElapsedTime()>= seconds(0.5))
 			{
 				if(sf::Keyboard::isKeyPressed(Keyboard::Up)){
-                	J.move(0,-sizeblock);
+                	J.move(-sizeblock);
                 	J.set_orientation(1);
                 //sleep(seconds(0.3));
             	}else if(sf::Keyboard::isKeyPressed(Keyboard::Down)){
-                	J.move(0,sizeblock);
+                	J.move(sizeblock);
                 	J.set_orientation(0);
                 //sleep(seconds(0.3));
                 }			
@@ -82,11 +96,13 @@ int main(int argc, char const *argv[])
 		
 
 
-        
-        if (car_clock_create.getElapsedTime()>=seconds(2))
+        /*Création de voitures*/
+       	if (car_clock_create.getElapsedTime()>=seconds(2))
         {
         	int voie = rand()%5;
-        	if (abs((voie+3)*sizeblock - crs.get_y())>30 && file[voie].size()<6)
+        	cout<<"voie "<<voie<<endl;
+        	cout<<file[voie][0].get_x()<<endl;
+        	if (abs((voie+3)*sizeblock - crs.get_y())>30 && (!file[voie].empty() && file[voie][0].get_x()>3*sizeblock || file[voie].empty() ))
         	{
         		file[voie].push_front(Voiture(-2*sizeblock, (3+voie)*sizeblock, -2*sizeblock, W, (3+voie)*sizeblock, (3+voie)*sizeblock, 2*sizeblock, sizeblock, 15, ecran ));
         		car_clock_create.restart();
@@ -105,11 +121,11 @@ int main(int argc, char const *argv[])
         	//cout<<alea<<endl;
         	if (alea<0.5-crs.get_love()/2)
         	{
-        		crs.move(0,sizeblock);
+        		crs.move(sizeblock);
 
         	}else if (alea>0.5+crs.get_love()/2)
         	{
-        		crs.move(0,-sizeblock);
+        		crs.move(-sizeblock);
 
         	}else{
         		//cout<<"ATTAQUE"<<endl;
@@ -119,13 +135,13 @@ int main(int argc, char const *argv[])
         	crs_clock.restart();
         }
         //cout<<"gren.get_temps= "<<seconds(gren.get_temps()).asSeconds()<<endl;
-        /*if (gren_clock.getElapsedTime()<=seconds(gren.get_temps()))
+       /* if (gren_clock.getElapsedTime()<=seconds(gren.get_temps()))
         {
 
         	gren.update((float)gren_clock.getElapsedTime().asSeconds());
         }*/
 
-        for (std::list<Grenade>::iterator i = gren.begin(); i != gren.end(); ++i)
+         for (std::list<Grenade>::iterator i = gren.begin(); i != gren.end(); ++i)
         {
         	if (i->update(gren_clock.getElapsedTime().asSeconds()))
         	{
@@ -137,14 +153,10 @@ int main(int argc, char const *argv[])
         			degat_clock.restart();//Réinitialisé à chaque fois qque le joueur se prend un dégat
         		}
         		i=gren.erase(i);
-
-
         	}
-
-        	
-        	
-        	//sleep(seconds(1));
         }
+        	
+        
         gren_clock.restart();
         
 
@@ -202,7 +214,7 @@ int main(int argc, char const *argv[])
        // cout<<"nombre de voiture: "<<Voiture::get_nbr_voiture()<<endl;
 
        
-
+        /*Affichage des voitures:*/
 		for (int i = 0; i < 5; ++i)
         		{
         			for (std::deque<Voiture>::iterator iter = file[i].begin(); iter != file[i].end(); ++iter)
@@ -212,6 +224,10 @@ int main(int argc, char const *argv[])
         			
         			}
         		}
+
+
+
+        		
         crs.draw(ecran);		
 		car.draw(ecran);
 		//ecran.draw_victoire();
@@ -227,11 +243,4 @@ int main(int argc, char const *argv[])
 		ecran.draw_Map();
 		
 	}
-	return 0;
-}
-
-
-
-void draw_grille(Ecran &E){
-
 }

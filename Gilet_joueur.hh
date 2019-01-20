@@ -4,7 +4,7 @@
 //#include <iostream>
 #include "Personne.hh"
 
-enum Orientation{FACE, DOS, PROFILE};
+enum Orientation{FACE, DOS, PROFILE};//orientation du personnage
 
 class Gilet_joueur: public Personne
 {
@@ -14,12 +14,12 @@ public:
   //virtual bool isInTheZone(const Player& p) const;  
   //virtual void interract(Mobile& m) = 0;
   virtual void draw(Ecran& e) const;
-  virtual void move(float x, float y);
-  bool colision_grenade(float x, float y, Ecran &e);
+  //virtual void move(float x, float y)
+  bool colision_grenade(float x, float y, Ecran &e); //Si la grenade de coordonnés(x,y) touche le joueur ce dernier perd une vie et la fonction renvoie true.
 
   int get_vie()const;
   void set_vie(int v);
-  void set_orientation(int o){_dir= (Orientation) o;}
+  void set_orientation(int o){_dir= (Orientation) o;} //met à jour l'orientation du joueur.
 private:
 	int _vie;
 	Orientation _dir;
