@@ -17,7 +17,7 @@ Grenade::Grenade(float x, float y, float Xi, float Xf, float Yi, float Yf, float
 	_duree=duree;
 	_temps=0;
 	//_active=true;
-	E.draw_Grenade(_x,_y,_h,_w);
+	//E.draw_Grenade(_x,_y,_h,_w);
 }
 
 

@@ -4,7 +4,7 @@ using namespace std;
 
 
 
-unsigned int Voiture::nbr_voiture = 0;
+unsigned int Voiture::nbr_voiture_arret = 0;
 
 Voiture::Voiture(float x, float y, float Xi, float Xf, float Yi, float Yf, float w, float h, float vitesse_max, Ecran& E){
 	_x=x;
@@ -20,8 +20,8 @@ Voiture::Voiture(float x, float y, float Xi, float Xf, float Yi, float Yf, float
 	_temps_redemare=3;
 	_time=0;       
 	E.draw_Voiture(_x,_y,_h,_w);
-	nbr_voiture++;
-	cout<<"nbr_voiture= "<<nbr_voiture<<endl;
+	//nbr_voiture++;
+	//cout<<"nbr_voiture= "<<nbr_voiture<<endl;
 }
 
 
@@ -99,6 +99,7 @@ void Voiture::operator()(Gilet_joueur const& J){
  				}	
  			}else{
  				_vitesse=0;
+ 				nbr_voiture_arret++;
  			}
  			
 		//}
@@ -118,4 +119,5 @@ bool Voiture::wait(float t){
 
 void Voiture::restart(){
 	_vitesse= _vitesse + (_vitesse_max - _vitesse)/(_temps_redemare +2);
+	nbr_voiture_arret--;
 }

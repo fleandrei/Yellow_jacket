@@ -3,15 +3,15 @@
 
 #include <iostream>
 #include <string>
-#include "Mobile.hh"
+#include "Projectile.hh"
 
-class Grenade: public Mobile
+class Grenade: public Projectile
 {
 public:
 	Grenade(float x, float y, float Xi, float Xf, float Yi, float Yf, float w, float h,float duree, Ecran &E);
 
   virtual void draw(Ecran& e) const;
-  bool update(float time); //Renvoie false si la grenade a attérit et doit être supprimer de la mêmoire. Renvoie true sinon
+  virtual bool update(float time); //Renvoie false si la grenade a attérit et doit être supprimer de la mêmoire. Renvoie true sinon
 
   float get_temps()const;
   float get_duree()const;

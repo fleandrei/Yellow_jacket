@@ -4,7 +4,7 @@ using namespace std;
 using namespace sf;
 
 
-Game::Game(float sizeblock):_sizeblock(sizeblock), _W(sizeblock*16),_H(_sizeblock*8), _ecran(_W,_H,sizeblock), _damage(false), _intro(true)
+Game::Game(float sizeblock):_sizeblock(sizeblock), _W(sizeblock*16),_H(_sizeblock*8), _ecran(_W,_H,sizeblock), _damage(false), _flash(false)
 							,_Joueur("Joueur",_W-_sizeblock, _H-2*sizeblock+5, _W-_sizeblock, _W, 3*sizeblock-30, _H-30, sizeblock, _sizeblock+5,_ecran)
 							,_crs("Benalla", 0, _H-2*sizeblock+5, 0, sizeblock, 3*sizeblock, _H-30, sizeblock, sizeblock+5, _ecran)
 							{}
@@ -20,18 +20,38 @@ Game::Game(float sizeblock):_sizeblock(sizeblock), _W(sizeblock*16),_H(_sizebloc
   }
 
   void Game::evenement_intro(){
+  	bool intro=true;
+  	Text tex1=_ecran.creat_text_arial("Choose Your", 50, sf::Color::Red, 4*_sizeblock, 2*_sizeblock);
+  	Text tex2=_ecran.creat_text_arial("Character :", 50, sf::Color::Red, 10*_sizeblock, 2*_sizeblock);
+  	while(intro && _ecran.isOpen()){
   	_ecran.draw_intro();
   	Event event;
+  	_ecran.draw_text(tex1);
+  	_ecran.draw_text(tex2);
   	if (_ecran.pollEvent(event))
 		{
-			if(event.type==Event::KeyPressed){
+			if (event.type==sf::Event::Closed)
+			{
+				_ecran.close();
+			}
+
+			if(event.type==Event::MouseButtonPressed){
+				
 				if (Mouse::isButtonPressed(Mouse::Left))
 				{
-					cout<<"mouse press"<<endl;
-					_intro=false;
+					if (_ecran.mouse_guillaume())
+					{
+						_ecran.set_joueur("Guillaume");
+					}else if(_ecran.mouse_andrei()){
+						_ecran.set_joueur("Andrei");
+					}
+					
+					intro=false;
 				}
 			}
   	}
+  	_ecran.render();
+  }
   }
 
 
@@ -148,10 +168,17 @@ void Game::car_act(){
         {
         	alea=(float)rand()/RAND_MAX;
         	//cout<<alea<<endl;
-        	if (alea<0.5-_crs.get_love()/2)
+        	if (abs(_crs.get_y() - _Joueur.get_y())<5 && !_flash && file[(int)(_crs.get_y()/_sizeblock) - 3].empty())
+        	{
+        		_flash=true;
+        		projectile.push_back(new Flashball(_sizeblock/2, _crs.get_y()+30, _W-_sizeblock/2, 1500));
+        		crs_flash_clock.restart();
+        		//cout<<"abs(_crs.get_y() - _Joueur.get_y())"<<abs(_crs.get_y() - _Joueur.get_y())<<endl;
+        	}
+        	if (alea<0.5-_crs.get_love()/2 && !_flash)
         	{
         		ind_route= (int)((_crs.get_y()+_sizeblock+5)/_sizeblock)-3;
-        		cout<<"crs ind_route: "<<ind_route;
+        		//cout<<"crs ind_route: "<<ind_route<<endl;;
         		if ( ind_route <=4 && (file[ind_route].empty() || (file[ind_route].end()-1)->get_x() < (_crs.get_Xi()-2*_sizeblock) || (file[ind_route].end()-1)->get_x() > _crs.get_Xf()) )
         		{
         			_crs.move(_sizeblock);
@@ -165,12 +192,11 @@ void Game::car_act(){
         		{
         			_crs.move(-_sizeblock);
         		}
-        		
 
         	}else{
         		//cout<<"ATTAQUE"<<endl;
         		float Y=_crs.get_y();
-        		gren.push_back(Grenade (_sizeblock/2,Y+3*_sizeblock/4, 0, _W-_sizeblock/2, Y+3*_sizeblock/4, Y-_sizeblock/4, _sizeblock, _sizeblock+5, 2, _ecran ));
+        		projectile.push_back(new Grenade (_sizeblock/2,Y+3*_sizeblock/4, 0, _W-_sizeblock/2, Y+3*_sizeblock/4, Y-_sizeblock/4, _sizeblock, _sizeblock+5, 2, _ecran ));
         	}
         	crs_clock.restart();
         }
@@ -179,18 +205,19 @@ void Game::car_act(){
 
 
 void Game::grenade_act(){
-	for (std::list<Grenade>::iterator i = gren.begin(); i != gren.end(); ++i)
+	for (std::list<Projectile*>::iterator i = projectile.begin(); i != projectile.end(); ++i)
         {
-        	if (i->update(gren_clock.getElapsedTime().asSeconds()))
+        	if ((*i)->update(gren_clock.getElapsedTime().asSeconds()))
         	{
-        		i->draw(_ecran);
+        		(*i)->draw(_ecran);
         		
         	}else{
-        		if(_Joueur.colision_grenade(i->get_x(), i->get_y(), _ecran)){ //renvoie true si il y a colision 
+        		if(_Joueur.colision_grenade((*i)->get_x(), (*i)->get_y(), _ecran)){ //renvoie true si il y a colision 
         			_damage=true;
         			degat_clock.restart();//Réinitialisé à chaque fois qque le joueur se prend un dégat
         		}
-        		i=gren.erase(i);
+        		//delete (*i);
+        		i=projectile.erase(i);
         	}
         }
         gren_clock.restart();
@@ -202,12 +229,12 @@ void Game::grenade_act(){
   	
   	initGame();
   	
-
+	evenement_intro();
   	while(_ecran.isOpen()){
 
-  		while(_intro){
-
-  		}
+  		
+  			
+  		
 
 		evenement();
 		creat_car();
@@ -232,11 +259,28 @@ void Game::grenade_act(){
 			_ecran.draw_degat(_Joueur.get_x(), _Joueur.get_y(), _Joueur.get_w(), _Joueur.get_h());
 			_damage=false;
 		}
-		_crs.draw(_ecran);
+		if (!_flash && crs_flash_clock.getElapsedTime().asSeconds()>=1)
+		{
+			_crs.draw(_ecran);
+		}else{
+			_ecran.draw_crs_flash(_crs.get_x(), _crs.get_y());
+			_flash=false;
+		}
+		
 		_ecran.render();
 		_ecran.draw_Map();
 
 	}
+	erase_list();
+	//_ecran.clear();
   }
+
+    void Game::erase_list(){
+    	for (std::list<Projectile*>::iterator i = projectile.begin(); i != projectile.end(); ++i)
+    	{
+    		i=projectile.erase(i);
+    	}
+    }
+
 
     

@@ -27,7 +27,7 @@ int main(int argc, char const *argv[])
 
 	Game jeu(sizeblock);
 	jeu.play();
-	provisoir();
+	//provisoir();
 	return 0;
 }
 

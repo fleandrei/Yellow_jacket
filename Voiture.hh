@@ -30,13 +30,13 @@ public:
 
   bool fin();
 
-  static int get_nbr_voiture(){return nbr_voiture;}
+  static int get_nbr_voiture_arret(){return nbr_voiture_arret;}
   float get_time()const{return _time;}
   float get_vitesse()const{ return _vitesse;}
 private:
 	float _vitesse;
 	float _vitesse_max;
-  	static unsigned int nbr_voiture;
+  	static unsigned int nbr_voiture_arret;
   	float _time;
   	float _temps_redemare;
 };
