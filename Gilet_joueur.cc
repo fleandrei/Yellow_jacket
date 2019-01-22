@@ -16,32 +16,19 @@ Gilet_joueur::Gilet_joueur(string nom, float x, float y, float Xi, float Xf, flo
 	_h=h;
 	_w=w; 
 	_vie=3;
-	cout<<"constructeur joueur"<<endl;
 	//E.draw_gilet(x,y,h,w);
 
 }
 
 
-/*void Gilet_joueur::move(float x, float y){
-	
-	if (_x+x >= _Xi && _x+x <= _Xf){
-		_x=_x+x;
-	}
-	if (_y+y >= _Yi && _y+y <=_Yf)
-	{
-		_y=_y+y;
-	}
 
-	//cout<<"_x= "<<_x<<" _y= "<<_y<<endl;
-}*/
 
 bool Gilet_joueur::colision_grenade(float x, float y, Ecran &e){
 	if (e.colision_joueur(sf::Vector2f(x,y)) || e.colision_joueur(sf::Vector2f(x,y+10)) || e.colision_joueur(sf::Vector2f(x+10,y)) || e.colision_joueur(sf::Vector2f(x+10,y+10)) )
 	{
 		_vie--;
-		cout<<"Aïe"<<endl;
-		//e.draw_degat(_x, _y, _h, _w);
-		return true;
+
+		return true;//Colision
 	}else{
 		return false;
 	}

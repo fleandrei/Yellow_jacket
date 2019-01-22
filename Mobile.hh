@@ -5,14 +5,14 @@
 #include "Ecran.hh"
 #include <cstdlib>
 
+
+/*Classe abstraite qui est la base de tous les élèments mobiles du jeu*/
 class Mobile
 {
 public:
-  //virtual bool isInTheZone(const Player& p) const;  
-  //virtual void interract(Mobile& m) = 0;
-  virtual void draw(Ecran& e) const = 0;
-  //void turnOn(){_active = true;}
-  //bool active()const {return _active;}
+  
+  virtual void draw(Ecran& e) const = 0; //Fonction pour dessiner à l'écran les classes qui dérivent de "Objet" 
+ 
   void set_position(float x,float y){_x = x; _y = y;}
   float get_x()const{return _x;}
   float get_y()const{return _y;}
@@ -26,7 +26,7 @@ public:
   
 
 protected:
-  float _h, _w;
+  float _h, _w; //hauteur et largeur de l'objet
   float _x, _y;
   float _Xi, _Xf;//Le personnage sera confiné sur l'axe des absisces entre Xi et Xf
   float _Yi, _Yf;//Le personnage sera confiné sur l'axe des ordonnées entre Yi et Yf

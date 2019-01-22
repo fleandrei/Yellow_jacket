@@ -9,18 +9,17 @@ class CRS: public Personne
 public:
 	CRS(std::string nom, float x, float y, float Xi, float Xf, float Yi, float Yf, float w, float h, Ecran& E);
 
-  //virtual bool isInTheZone(const Player& p) const;  
-  //virtual void interract(Mobile& m) = 0;
+
   virtual void draw(Ecran& e) const;
-  //virtual void move(float x, float y);
+
   
-  void act();
 
   float get_love()const;
   
+  void set_love(float l){love=l;}
   
 private:
-	float love; //Level Of ViolencE 
+	float love; //Level Of ViolencE comprit entre 0.2 et 0.7
 };
 
 #endif

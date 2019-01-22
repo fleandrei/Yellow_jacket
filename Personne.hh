@@ -8,9 +8,7 @@
 class Personne: public Mobile
 {
 public:
-  //virtual bool isInTheZone(const Player& p) const;  
-  //virtual void interract(Mobile& m) = 0;
-  //virtual void draw(Ecran& e) const = 0;
+
 virtual void move(float y){_y=_y+y;}
 void set_name(std::string n){name=n;}
 std::string get_name(){return name;}		
@@ -18,7 +16,7 @@ std::string get_name(){return name;}
 		
   
 protected:
-  std::string name;
+  std::string name; 
   
 };
 

@@ -58,7 +58,6 @@ bool Voiture::fin(){
 
 
 int Voiture::operator-(Mobile const& M){
-	//if (M.get_y() > _y+_h || M.get_y() < _y-_h)
 	if(abs(M.get_y() - _y) > 10)
 	{
 		return 1000;    // S'il s'agit du joueur et que ce dernier est loin de la voie sur laquelle se trouve la voiture alors, 
@@ -69,6 +68,7 @@ int Voiture::operator-(Mobile const& M){
 }
 
  void Voiture::operator()(Voiture const& V){
+ 	
  	unsigned int v_speed=V._vitesse; //vitesse de la voiture d'en face.
  	
  	
@@ -76,9 +76,9 @@ int Voiture::operator-(Mobile const& M){
  		_vitesse=_vitesse + (v_speed - _vitesse)/Td;
  		if (_vitesse<0.5)
  		{
-
  			_vitesse=0;
  			_time=_temps_redemare;
+ 			nbr_voiture_arret++;
  		}
  	
  }
@@ -88,27 +88,37 @@ void Voiture::operator()(Gilet_joueur const& J){
 
 		//if (J.get_y() < _y+10 && J.get_y() > _y-10)
 		//{
+			if(_vitesse>0){
 			float Td=((J.get_x()-_x - _w +10 )/_vitesse); //Temps dans lequel la voiture va atteindre la position à laquelle se trouve acctuelement le joueur. 
- 			if (Td>0)
- 			{
- 				_vitesse=_vitesse - _vitesse/Td;
- 				if (_vitesse<1) 
+ 				if (Td>0)
  				{
+ 					_vitesse=_vitesse - _vitesse/Td;
+					if (_vitesse<1) 
+ 					{ 					
+ 						nbr_voiture_arret++;
+ 						 _vitesse=0;
+ 						_time=_temps_redemare;
+ 					
+ 					}	
+ 				}else{
  					_vitesse=0;
- 					_time=_temps_redemare;
- 				}	
- 			}else{
- 				_vitesse=0;
- 				nbr_voiture_arret++;
+ 					nbr_voiture_arret++;
+ 				}
+ 			}else if(_vitesse==0){
+ 				_time=_temps_redemare;
  			}
+ 		}
  			
 		//}
-}
+
 
 bool Voiture::wait(float t){
 	if (_time > 0)
 	{
 		_time= _time - t;
+		if(_time<=0){
+			nbr_voiture_arret--;
+		}
 		return true;
 	}else{
 		_time= 0;
@@ -119,5 +129,5 @@ bool Voiture::wait(float t){
 
 void Voiture::restart(){
 	_vitesse= _vitesse + (_vitesse_max - _vitesse)/(_temps_redemare +2);
-	nbr_voiture_arret--;
+	
 }

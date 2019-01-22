@@ -19,8 +19,6 @@ public:
   
 protected:
   
-  //float cible_x, cible_y;
-  //bool _active;
   float _duree; //temps entre le moment où la grenade est lancée et où elle est censsée attérir.
   float _temps; //temps entre le moment où la grenade a été lancée et le moment présent. 
 };

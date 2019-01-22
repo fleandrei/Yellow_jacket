@@ -10,11 +10,8 @@ class Gilet_joueur: public Personne
 {
 public:
 	Gilet_joueur(std::string nom, float x, float y, float Xi, float Xf, float Yi, float Yf, float w, float h, Ecran& E);
-	//Gilet_joueur(Gilet_joueur const& J);
-  //virtual bool isInTheZone(const Player& p) const;  
-  //virtual void interract(Mobile& m) = 0;
+
   virtual void draw(Ecran& e) const;
-  //virtual void move(float x, float y)
   bool colision_grenade(float x, float y, Ecran &e); //Si la grenade de coordonnés(x,y) touche le joueur ce dernier perd une vie et la fonction renvoie true.
 
   int get_vie()const;
@@ -22,7 +19,7 @@ public:
   void set_orientation(int o){_dir= (Orientation) o;} //met à jour l'orientation du joueur.
 private:
 	int _vie;
-	Orientation _dir;
+	Orientation _dir; // -De dos  -De profile   - de face
  
 };
 

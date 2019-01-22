@@ -24,16 +24,16 @@ Grenade::Grenade(float x, float y, float Xi, float Xf, float Yi, float Yf, float
 
 bool Grenade::update(float time){
 	_temps=_temps+time;
-	if (_temps>=_duree)
+	if (_temps>=_duree)//La grenade a atterit et explosée
 	{
 		return false;
 	}else{
-		_x=_Xi+ _temps*(_Xf-_Xi)/(_duree);
-		//_y=9.81*12*pow(_temps,2)*0.5 - 0.5*9.81*12*_duree *_temps + _Yi;
+
+		/*Equations de x et de y en fonction du temps de manière à ce que la trajectoire de la grenadde forme une parabole*/
+		_x=_Xi+ _temps*(_Xf-_Xi)/(_duree); 
 		float k= -(_Yf-_Yi)*4/pow(_duree,2);
 		_y=k*pow(_temps,2)-k*_duree*_temps+_Yi;
-		//cout<<"yi "<<_Yi<<endl;
-		//cout<<"_temps "<<_temps<<" x= "<<_x<<" y= "<<_y<<endl;
+		
 		return true;
 	}
 	
