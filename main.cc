@@ -22,7 +22,7 @@ int main(int argc, char const *argv[])
 {	
 	float sizeblock=100;//Taille des blocs
 	bool try_again(true);// vrai tantque le joueur souhaite jouer
-	Game jeu(sizeblock, 5); 
+	Game jeu(sizeblock, 25, 180); // 2ème argument: nombre de voitures qu'il faut arrêter pour gagner;   3ème argument: Temps dont on dispose pour gagner.  
 	
 	while(try_again){//Tant que le joueur souhaite jouer, on continue.
 		try_again=jeu.play();

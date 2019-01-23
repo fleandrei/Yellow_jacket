@@ -17,8 +17,7 @@ Ecran::Ecran(uint16_t w, uint16_t h, uint16_t sizeblock): _h(h), _w(w), _sizeblo
 	sprite_decor();
 	sprite_fin();
 
-
-
+	load_music();
 
 
 	// On Charge la texture de La Voiture et on crée le sprite correspondant
@@ -35,12 +34,12 @@ Ecran::Ecran(uint16_t w, uint16_t h, uint16_t sizeblock): _h(h), _w(w), _sizeblo
 
 void Ecran::sprite_intro(){
 	// On Charge la texture de gilet jaune et on crée le sprite correspondant
-	if (!Gui_intro_tex.loadFromFile("guillaume_fondblanc.jpg"))
+	if (!Gui_intro_tex.loadFromFile("Image/guillaume_fondblanc.jpg"))
 	{
     	std::cout<<"Erreure l'image guillaume.jpg n'est pas chargée"<<std::endl;
 	}
 
-	if (!And_intro_tex.loadFromFile("andrei_fondblanc.jpg"))
+	if (!And_intro_tex.loadFromFile("Image/andrei_fondblanc.jpg"))
 	{
 		std::cout<<"Erreure l'image andrei.jpg n'est pas chargée"<<std::endl;
 	}
@@ -139,9 +138,9 @@ void Ecran::sprite_decor(){
 	Map_spr.setScale((_w+70)/Map_spr.getLocalBounds().width, (20+5*_sizeblock)/Map_spr.getLocalBounds().height);
 
 
-	if (!Background_tex.loadFromFile("Image/arriereplan.png"))
+	if (!Background_tex.loadFromFile("Image/ville.png"))
 	{
-		cout<<"Erreure l'image arriereplan.png n'a pas pue être chargée"<<endl;
+		cout<<"Erreure l'image ville.png n'a pas pue être chargée"<<endl;
 	}
 
 	Background_tex.setSmooth(true);
@@ -159,6 +158,8 @@ void Ecran::sprite_decor(){
 	Trotoire_spr.setTextureRect(IntRect(100, 200, 1500, 200));
 	Trotoire_spr.setPosition(-40,8*_sizeblock);
 	Trotoire_spr.setScale((_w+70)/Trotoire_spr.getLocalBounds().width, (50)/Trotoire_spr.getLocalBounds().height);
+
+	
 }
 
 
@@ -393,6 +394,81 @@ Text Ecran::creat_text_error(std::string tex, int size, sf::Color col, float x, 
 	return text;	
 
 }
+
+void Ecran::load_music(){
+	if (!giletjauneee.openFromFile("music/giletjauneee.wav"))
+  	{
+  		cout<<"Problème lors du chargement de la musique giletjauneee"<<endl;
+  	}
+
+  	if (!matrix.openFromFile("music/matrix.wav"))
+  	{
+  		cout<<"Problème lors du chargement de la musique matrix"<<endl;
+  	}
+	
+	if (!vent_folie.openFromFile("music/vent_de_folie.wav"))
+  	{
+  		cout<<"Problème lors du chargement de la musique vent_folie"<<endl;
+  	}
+
+  	if (!cri_buf.loadFromFile("music/cri.wav"))
+  	{
+  		cout<<"Problème lors du chargement du son cri.wav"<<endl;
+  	}
+
+  	cri_son.setBuffer(cri_buf);
+  	cri_son.setVolume(50);
+
+  	if (!tir_buf.loadFromFile("music/tir.wav"))
+  	{
+  		cout<<"Problème lors du chargement du son tir.wav"<<endl;
+  	}
+
+  	tir_son.setBuffer(tir_buf);
+  	tir_son.setVolume(100);
+if (!explosion_buf.loadFromFile("music/explosion.wav"))
+  	{
+  		cout<<"Problème lors du chargement du son explosion.wav"<<endl;
+  	}
+
+  	explosion_son.setBuffer(explosion_buf);
+  	explosion_son.setVolume(50);
+
+  if (!coin_buf.loadFromFile("music/coin.wav"))
+  	{
+  		cout<<"Problème lors du chargement du son coin.wav"<<endl;
+  	}
+
+  	coin_son.setBuffer(coin_buf);
+}
+
+
+
+
+void Ecran::music_giletjauneee(){
+	giletjauneee.play();
+	giletjauneee.setPlayingOffset(sf::seconds(14.f));
+	giletjauneee.setLoop(true);
+
+}
+
+void Ecran::music_matrix(){
+	matrix.play();
+	//giletjauneee.setPlayingOffset(sf::seconds(14.f));
+	matrix.setLoop(true);
+
+}
+
+void Ecran::music_vent_folie(){
+	vent_folie.play();
+	//giletjauneee.setPlayingOffset(sf::seconds(14.f));
+	vent_folie.setVolume(90.f);
+	vent_folie.setLoop(true);
+
+}
+
+
+
 /*
 void Ecran::clear(){
 	delete &Andrei_spr;

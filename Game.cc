@@ -4,9 +4,9 @@ using namespace std;
 using namespace sf;
 
 
-Game::Game(float sizeblock, int seuil_victoire):_sizeblock(sizeblock), _W(sizeblock*16),_H(_sizeblock*8), _ecran(_W,_H,sizeblock), _damage(false), _flash(false)
+Game::Game(float sizeblock, int seuil_victoire, int timer):_sizeblock(sizeblock), _W(sizeblock*16),_H(_sizeblock*8), _ecran(_W,_H,sizeblock), _damage(false), _flash(false)
 							,_Joueur("Joueur",_W-_sizeblock, _H-2*sizeblock+5, _W-_sizeblock, _W, 3*sizeblock-30, _H-30, sizeblock, _sizeblock+5,_ecran)
-							,_crs("Benala", 0, _H-2*sizeblock+5, 0, sizeblock, 3*sizeblock, _H-30, sizeblock, sizeblock+5, _ecran), _seuil_victoire(seuil_victoire)
+							,_crs("Benala", 0, _H-2*sizeblock+5, 0, sizeblock, 3*sizeblock, _H-30, sizeblock, sizeblock+5, _ecran), _seuil_victoire(seuil_victoire), _timer(timer)
 							{}
   
 
@@ -32,6 +32,7 @@ Game::Game(float sizeblock, int seuil_victoire):_sizeblock(sizeblock), _W(sizebl
   		crs_flash_clock.restart();
   		degat_clock.restart();
   		gren_clock.restart();
+  		global_clock.restart();
   		_Joueur.set_vie(3);
   		_crs.set_love(0.2);
   		Voiture::set_nbr_voiture_arret(0);
@@ -51,7 +52,7 @@ Game::Game(float sizeblock, int seuil_victoire):_sizeblock(sizeblock), _W(sizebl
   	yellow_jaket.setPosition(_W/2 - yellow_jaket.getGlobalBounds().width/2, 10);
   	yellow_jaket.setStyle(Text::Bold);
   	yellow_jaket.setColor(Color::Yellow);
-
+  	_ecran.music_matrix();
 
   	while(intro && _ecran.isOpen()){
   		/*Afichage des images et du texte*/
@@ -89,6 +90,7 @@ Game::Game(float sizeblock, int seuil_victoire):_sizeblock(sizeblock), _W(sizebl
   		}
   		_ecran.render();
  	 }
+ 	 _ecran.music_matrix_stop();
 
  	 
   }
@@ -142,6 +144,7 @@ Game::Game(float sizeblock, int seuil_victoire):_sizeblock(sizeblock), _W(sizebl
   	Text try_again=_ecran.creat_text_adventure("TRY AGAIN", 50, sf::Color::Green, 6*_sizeblock+50, 6*_sizeblock);
 
   	bool continu=false;
+  	_ecran.music_vent_folie();
   	while(_ecran.isOpen() && !continu){
   	Event event;
 
@@ -170,6 +173,8 @@ Game::Game(float sizeblock, int seuil_victoire):_sizeblock(sizeblock), _W(sizebl
   	}
   	_ecran.render();
   }
+  _ecran.music_vent_folie_stop();
+  return continu;
   }
   
 
@@ -178,6 +183,7 @@ Game::Game(float sizeblock, int seuil_victoire):_sizeblock(sizeblock), _W(sizebl
   	Text victoire=_ecran.creat_text_violent("VICTOIRE!", 50, sf::Color::Yellow, 6*_sizeblock, 1*_sizeblock);
   	Text try_again=_ecran.creat_text_adventure("TRY AGAIN", 50, sf::Color::Green, 6*_sizeblock+10, 6*_sizeblock);
   	bool continu=false;
+  	_ecran.music_giletjauneee();
   	while(_ecran.isOpen() && !continu){
   	Event event;
 
@@ -206,6 +212,7 @@ Game::Game(float sizeblock, int seuil_victoire):_sizeblock(sizeblock), _W(sizebl
   	}
   	_ecran.render();
   }
+  _ecran.music_giletjauneee_stop();
   return continu;
   }
   
@@ -231,32 +238,40 @@ Game::Game(float sizeblock, int seuil_victoire):_sizeblock(sizeblock), _W(sizebl
 void Game::car_act(){
 	if (car_clock_move.getElapsedTime()>=seconds(0.05)) 
         {
+        	int sum_voit_immobile=0;
         	std::deque<Voiture>::iterator iter;
         	for (int i = 0; i < 5; ++i)
         	{
-        		/*On travaille sur l'ensemble des voitures d'une même file, sauf la tête de queue*/
+
+        		/*On travaille sur l'ensemble des voitures d'une même file*/
         		for ( iter = file[i].begin(); iter != file[i].end(); ++iter)
         		{
         			if (!iter->wait(car_clock_wait.getElapsedTime().asSeconds()))
         			{
         				if (iter !=  (file[i].end()-1) && *iter-*(iter+1) < 3*_sizeblock)
         				{
-        					(*iter)(*(iter+1));
+        					if((*iter)(*(iter+1))){
+        						_ecran.sons_coin();
+        					}
         				}else if(iter !=  (file[i].end()-1)){
         					iter->restart();
         				}
         				iter->move();
+        			}else{
+        				sum_voit_immobile++;
         			}
         		}
         		
         		  
-        		/*On travaille sur la tête de queu*/
+        		/*On travaille sur la tête de queu spécifiquement*/
         		if (!file[i].empty()) 
         		{
 
         			if ((*(file[i].end()-1))-_Joueur < 3*_sizeblock ) //Si le personnage est devant la voiture
         			{
-        				(*(file[i].end()-1))(_Joueur);
+        				if((*(file[i].end()-1))(_Joueur)){
+        					_ecran.sons_coin();
+        				}
         				//cout<<"J devant "<<i<<endl;
 
         			}else if((file[i].end()-1)->get_time() == 0){ 
@@ -271,6 +286,7 @@ void Game::car_act(){
         			}
         		}
         	}
+        	Voiture::set_nbr_voiture_arret(sum_voit_immobile);
         	
         	//car.move();
         	car_clock_move.restart();
@@ -292,6 +308,7 @@ void Game::car_act(){
         		_flash=true;
         		projectile.push_back(new Flashball(_sizeblock/2, _crs.get_y()+30, _W-_sizeblock/2, 1500));
         		crs_flash_clock.restart();
+        		_ecran.sons_tir();
         	}
 
         	/*Tire de grenade et déplacement:*/
@@ -358,9 +375,11 @@ void Game::grenade_act(){
         		if(_Joueur.colision_grenade((*i)->get_x(), (*i)->get_y(), _ecran)){ //renvoie true si il y a colision avec le joueur
         			_damage=true;
         			degat_clock.restart();//Réinitialisé à chaque fois que le joueur se prend un dégat
+        			_ecran.sons_cri();
         		}
         		delete (*i);
         		i=projectile.erase(i);
+        		_ecran.sons_explosion();
         	}
         }
         gren_clock.restart();
@@ -421,40 +440,73 @@ void Game::draw_jeu(){
 
  }
 
+ bool Game::draw_timer(int time){
+ 	int temp_restant=_timer - time;
+ 	Vector2i T = standard_time(temp_restant);
+ 	Text temps=_ecran.creat_text_arial("TIMER: "+int2string(T.x)+":"+int2string(T.y), 30, sf::Color::Black, 14*_sizeblock+50, 0*_sizeblock );
+ 	_ecran.draw_text(temps);
+ 	return (temp_restant>0);
+ }
 
+sf::Vector2i Game::standard_time(int time){
+	return Vector2i(time/60, time%60);
+}
 
 	/*Fonction principale*/
   bool Game::play(){
   	bool continu=true;
+  	
   	initGame();
   	/*Création des textes que l'on va afficher dans la partie principale*/
-  	Text life=_ecran.creat_text_arial("Life: ", 30, sf::Color::Red, 12*_sizeblock, 0*_sizeblock);
-  	Text score=_ecran.creat_text_arial("Voitures arretees: ", 30, sf::Color::Blue, 13*_sizeblock, 0*_sizeblock);
-	
+  	Text life=_ecran.creat_text_arial("Life: ", 30, sf::Color::Red, 13*_sizeblock+10, 0*_sizeblock);
+  	Text score=_ecran.creat_text_arial("Voitures arretees: ", 30, sf::Color::Blue, 10*_sizeblock, 0*_sizeblock);
+	Text stop=_ecran.creat_text_adventure("Stop", 200, sf::Color::Yellow, 7*_sizeblock, 3*_sizeblock);
+	Text the_car=_ecran.creat_text_adventure("the Cars", 200, sf::Color::Yellow, 7*_sizeblock, 3*_sizeblock+30);
+	stop.setPosition(8*_sizeblock-stop.getGlobalBounds().width/2, 3*_sizeblock);
+	the_car.setPosition(8*_sizeblock-the_car.getGlobalBounds().width/2, 5*_sizeblock);
   	/*Ecran introductif*/
 	evenement_intro();
   	
   	/*Boucle while dans laquelle se déroule le jeu: Partie interactive du jeu*/
   	while(_ecran.isOpen() && continu){
+  		float temps=global_clock.getElapsedTime().asSeconds();
+  		
+  		/*Pendant les 5 premières secondes du jeu, on affiche les instructions: "Stop the Cars"*/
+  		if (temps < 5)
+  		{
+  			
+  			_ecran.draw_text(stop);
+  			_ecran.draw_text(the_car);
+
+  			/*Au bout de 2 secondes, les instructions commencent à monter vers le haut de l'écran pour disparaitre*/
+  			if(temps>2){
+  				stop.setPosition(stop.getPosition().x, 3*_sizeblock-(temps-2)*7*_sizeblock/3);
+  				the_car.setPosition(the_car.getPosition().x, 5*_sizeblock- (temps-2)*7*_sizeblock/3);
+  			}
+  			//stop.setScale(reduce_size, reduce_size);
+  			//the_car.setScale(reduce_size, reduce_size);
+  			//stop.setCharacterSize(200-200*temps/3);
+  			//the_car.setCharacterSize(200-200*temps/3);
+  		}
+
 		evenement(); 
 		creat_car(); //Création de voitures
 		crs_act();// Action du crs
 		grenade_act();//gestion des projectils
 		car_act();//actins des voitures
 		draw_jeu();//affichage du jeu
-		continu=(draw_my_life(life) && draw_score(score)); //Si on a perdu toute ses vie ou qu'on a atteint le score qu'il fallait, on arrete la boucle
+		continu=(draw_my_life(life) && draw_score(score) && draw_timer((int)temps)); //Si on a perdu toute ses vie ou qu'on a atteint le score qu'il fallait, on arrete la boucle
 		//continu=true;
 	}
 	continu=false;
 	erase_list(); // Vide les deux containers "file" et "gren" de notre classe afin de pouvoir être réutilisés au cas où le joueur souhaiterait refaire une partie
 	
-	if (_Joueur.get_vie()<=0)
+	if (Voiture::get_nbr_voiture_arret()>=_seuil_victoire)
 	{
-		continu=defaite();
-	}else{
 		continu=victoire();
+	}else{
+		continu=defaite();
 	}
-	
 	return continu; //true: on refait une partie;  false: ons'arrète.
 	
   }

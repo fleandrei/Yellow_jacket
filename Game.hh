@@ -20,7 +20,7 @@
 
 class Game{
  public :
- Game(float sizeblock, int seuil_victoire); //sizeblock: taille des blocs;   seuil_victoire: nombre de voitures qu'il faut stoper pour gagner
+ Game(float sizeblock, int seuil_victoire, int timer); //sizeblock: taille des blocs;   seuil_victoire: nombre de voitures qu'il faut stoper pour gagner
   //~Game();
   bool play(); //Fonction principale qui fait tourner le jeu.
   
@@ -39,12 +39,22 @@ class Game{
   bool draw_score(sf::Text score);//affiche le nombre de voitures arretées sur le nombre de voitures qu'il faut areter. Renvoie true si ce nombre est atteint
   bool draw_my_life(sf::Text life);//affiche les points de vie restants et renvoie false si il n'y a plus de vie.
   void erase_list();//libère les élèments de la list projectile
+  
+  /*affiche le temps qu'il reste pour gagner le jeu. Renvoie false si ce temps est dépassé. Le _timer du jeu entrée en paramètre à la 
+  création du jeu est donné sous forme timer_m:timer_s. Cela afin de ne pas avoir à partager le _timer (qui est une valeur constante)
+   en seconde et minutes à chaque appel de draw_time.*/
+  bool draw_timer(int time);
+
+/*transforme un temps en seconde "time" en un temps minutes:secondes. Renvoie un vecteur de int à 2 dimmenssion: le premier... 
+... contient le nombre de minutes tands que le deuxième contient le nombre de seconde*/
+  sf::Vector2i standard_time(int time);
   std::string int2string(int i);
 
   float _sizeblock;
   float _W; //Largeur de l'écran
   float _H;//Hauteur de l'écran
   int _seuil_victoire; //Nombre de voitures qu'il faut arreter pour gagner.
+  int _timer; // temps en seconde que l'on a pour gagner le jeu, au delà, on a perdu.
 
   bool _damage; //true si le joueur s'est pris un dégat.
   bool _flash;//True si une flashball a été lancée
@@ -57,7 +67,7 @@ class Game{
   sf::Clock crs_clock; //temps relatif au crs.
   sf::Clock crs_flash_clock;//temps relatif aux flashball
   sf::Clock degat_clock;//temps relatif aux degats
-
+  sf::Clock global_clock; //Temps global du jeu
 
 
   Gilet_joueur _Joueur; 

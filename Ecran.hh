@@ -2,6 +2,7 @@
 #define ECRAN_HH_
 #include <iostream>
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 
 
 class Ecran /*Intermédiaire permettant aux autres classes d'inter agir avec l'écran*/
@@ -16,6 +17,17 @@ public:
     void render(){_win->display(); _win->clear();} //Affiche tous ce qu'il y a sur l'ecran; puis efface l'écran actuel.
     bool pollEvent(sf::Event& event){return _win->pollEvent(event);}
 
+
+    void music_giletjauneee();
+    void music_giletjauneee_stop(){giletjauneee.stop();}
+    void music_matrix();
+    void music_matrix_stop(){matrix.stop();}
+    void music_vent_folie();
+    void music_vent_folie_stop(){vent_folie.stop();}
+    void sons_tir(){tir_son.play();}
+    void sons_cri(){cri_son.play();}
+    void sons_explosion(){explosion_son.play();}
+    void sons_coin(){coin_son.play();}
     /*Renvoie true si le point passé en paramètre se trouve sur le sprite du joueur*/
     bool colision_joueur(sf::Vector2f point){return joueur_spr.getGlobalBounds().contains(point);}
 
@@ -45,6 +57,7 @@ public:
     void draw_defaite();
     void draw_victoire();
 
+
     /*Méthode permettant de créer en différentes polices, des texte affichables */
     sf::Text creat_text_arial(std::string text, int size, sf::Color col, float x, float y);
     sf::Text creat_text_adventure(std::string text, int size, sf::Color col, float x, float y);
@@ -68,6 +81,7 @@ private:
 
 	void police_ecriture();//Méthode chargée de charger les différentes polices d'écriture
 
+	void load_music();//S'occupe de charger les musiques et les sons.
 
   	//texture et sprite Gilet jaune
   	sf::Texture Guillaume_tex;
@@ -136,15 +150,32 @@ private:
   	sf::Texture Dance_tex;
   	sf::Sprite Dance_spr;
 
+ 
+
   	//Police d'écriture:
   	sf::Font arial;
   	sf::Font error;
   	sf::Font violent;
   	sf::Font Adventure;
+
+  	//Musique:
+  	sf::Music giletjauneee;
+  	sf::Music matrix;
+  	sf::Music vent_folie;
+
+  	//Sons:
+  	sf::SoundBuffer cri_buf;
+  	sf::Sound cri_son;
+  	sf::SoundBuffer tir_buf;
+  	sf::Sound tir_son;
+  	sf::SoundBuffer explosion_buf;
+  	sf::Sound explosion_son;
+  	sf::SoundBuffer coin_buf;
+  	sf::Sound coin_son;
   };
 
 
-
+  	
 
 
 

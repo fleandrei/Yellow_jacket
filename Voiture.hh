@@ -16,8 +16,9 @@ public:
   
   virtual int operator-(Mobile const& M);//surcharge d'opérateur virtuelle renvoyant la distance entre la voiture et l'objet Mobile passé en paramètre 
 
-  void operator()(Voiture const& V);//Gère l'attitude à avoir (s'arreter, ralentir, rester à l'arret) par rapport à la voiture d'en face passée en paramètre
-  void operator()(Gilet_joueur const& J);//Gère l'attitude à avoir (s'arreter, ralentir, rester à l'arret) par rapport au joueur passée en paramètre
+
+  bool operator()(Voiture const& V);//Gère l'attitude à avoir (s'arreter, ralentir, rester à l'arret) par rapport à la voiture d'en face passée en paramètre. Renvoie true si la voiture vient de s'arreter
+  bool operator()(Gilet_joueur const& J);//Gère l'attitude à avoir (s'arreter, ralentir, rester à l'arret) par rapport au joueur passée en paramètre. Renvoie true si la voiture vient de s'arreter
 
   bool wait(float t);// renvoie true si la voiture doit attendre encore avant de redémarer. Elle rajoute au temps d'attente déjà effectué
   					 // le temps t
